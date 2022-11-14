@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="10 seconds">
+	<!--日志文件根目录路径 -->
+	<property name="LOG_PATH" value="F:/log/logs_xuantie" />
+	
+	
+	<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!-- 同步appender -->
+	<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!-- 控制台日志 -->
+	<appender name="LOG_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%d{HH:mm:ss.SSS}-[%thread] %-5level -%msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<!-- 文本日志 -->
+	<appender name="LOG_FILE_INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+		<File>${LOG_PATH}/systemlog/xuantie.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/systemlog/%d{yyyyMMdd}/xuantie-%d{yyyyMMdd}-%i.log</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>50MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>180</maxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} -%msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+
+	<!-- sql日志 -->
+	<appender name="LOG_FILE_SQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${LOG_PATH}/sqllog/sql.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/sqllog/%d{yyyyMMdd}/sql-%d{yyyyMMdd}-%i.log</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>50MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>180</maxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} -%msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+
+	<!-- 接口调用日志 -->
+	<appender name="LOG_FILE_ACCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+		<File>${LOG_PATH}/accesslog/access.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/accesslog/%d{yyyyMMdd}/access-%d{yyyyMMdd}-%i.log</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>50MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>180</maxHistory>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} -%msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+	</appender>
+
+	<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!-- 异步appender -->
+	<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!-- 文本日志异步输出 -->
+	<appender name="LOG_FILE_INFO_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+		<!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
+		<discardingThreshold>0</discardingThreshold>
+		<!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+		<queueSize>512</queueSize>
+		<!-- 添加附加的appender,最多只能添加一个 -->
+		<appender-ref ref="LOG_FILE_INFO" />
+	</appender>
+
+	<!-- sql日志异步输出 -->
+	<appender name="LOG_FILE_SQL_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+		<discardingThreshold>0</discardingThreshold>
+		<queueSize>512</queueSize>
+		<appender-ref ref="LOG_FILE_SQL" />
+	</appender>
+
+	<!-- 接口调用日志异步输出 -->
+	<appender name="LOG_FILE_ACCESS_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+		<discardingThreshold>0</discardingThreshold>
+		<queueSize>512</queueSize>
+		<appender-ref ref="LOG_FILE_ACCESS" />
+	</appender>
+
+	<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!-- logger -->
+	<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!-- 接口调用日志logger -->
+	<logger name="accesslog" additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="LOG_FILE_ACCESS_ASYNC" />
+	</logger>
+
+	<!-- sql日志logger -->
+	<logger name="jdbc.sqlonly" level="OFF" />
+	<logger name="jdbc.sqltiming" level="INFO" additivity="true">
+		<appender-ref ref="LOG_FILE_SQL_ASYNC" />
+	</logger>
+	<logger name="jdbc.audit" level="ERROR" additivity="false">
+		<appender-ref ref="LOG_FILE_SQL_ASYNC" />
+	</logger>
+	<logger name="jdbc.resultset" level="ERROR" additivity="false">
+		<appender-ref ref="LOG_FILE_SQL_ASYNC" />
+	</logger>
+	
+	<!-- 根logger -->
+	<root level="INFO">
+		<appender-ref ref="LOG_CONSOLE" />
+		<appender-ref ref="LOG_FILE_INFO_ASYNC" />
+	</root>
+</configuration>

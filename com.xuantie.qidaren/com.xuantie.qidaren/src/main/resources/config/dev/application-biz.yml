@@ -1,0 +1,63 @@
+#				《业务配置文件》
+#------------------------------------------------
+#-开发环境-
+profileType: dev
+
+#是否开启域名验证,针对js端调用
+openOriginCheck: false
+
+#域名限制等级 {1-域名弱匹配,仅匹配是否存在xuantie  2-域名强匹配,域名是否在配置allowedOrigin中}
+originLimitLevel: 2
+
+#允许访问的域名
+allowedOrigin:
+ 'localhost:8037': 测试地址
+ '172.16.2.251:8037': 测试地址
+
+#是否开启IP验证,针对后台调用
+openIPCheck: true
+
+#允许访问的IP
+allowedIP:
+ '127.0.0.1': 本地测试环境
+
+#安全检查配置
+#------------------------------------------------
+#IP黑名单过期时间 1h (单位:秒)
+blackIpExpiretime: 3600
+
+#IP白名单列表,以逗号分隔,如：192.168.1.1,192.168.1.2
+whiteIpList: 172.16.2.251
+
+#网关地址
+gatewayIp: 192.168.10.1
+
+#访问频率限制规则, 例如:60$5|300$20, 含义:60秒内最多可访问5次;300秒内最多可访问20次
+accessLimitRule: 60$200
+
+#鉴权配置
+#------------------------------------------------
+#鉴权标识,js调用
+authIdentify4client: xuanti!123
+
+#鉴权标识,后台调用
+authIdentify4server: xuanti!123!server
+
+#鉴权标识,app调用
+authIdentify4app: xuanti!123!app
+
+#鉴权标识,跑批程序调用,用于无用户登录token情况
+authIdentify4batch: xuanti!123!batch
+
+#鉴权标识加密秘钥前缀
+authEncrypKeyPrefix: '%$xuanti!#'
+
+#用户token在Redis中的前缀
+authTokenKeyPrefix: 'PP:usertoken:'
+
+#调用来源标识及对应名称
+requestOriginFlag:
+ qidaren: 是什么呢
+ 
+ 
+
